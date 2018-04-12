@@ -9,7 +9,7 @@
             <param name="ConversionPattern"
                 value="[%d{ISO8601}] %-5p [%c] %m %n" />
             -->
-            <param name="ConversionPattern" value="%-5p [%c] %m %n" />
+            <param name="ConversionPattern" value="[%d{ISO8601}] %-5p [%c] %m %n" />
         </layout>
     </appender>
      
@@ -42,6 +42,16 @@
         <param name="MaxBackupIndex" value="5" />
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="[%d{ISO8601}] %-5p %m%n" />
+        </layout>
+    </appender>
+    
+    <appender name="PROCESSED_URLS" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="processed-urls.log" />
+        <param name="Append" value="true" />
+        <param name="MaxFileSize" value="10000KB" />
+        <param name="MaxBackupIndex" value="5" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%m%n" />
         </layout>
     </appender>
     
@@ -84,6 +94,11 @@
     <logger name="fr.sparna.rdf.extractor.cli.crawl.ExtractorCrawler" additivity="false">
         <level value="INFO" />
         <appender-ref ref="CRAWLED_URLS" />
+    </logger>
+    
+    <logger name="fr.sparna.rdf.extractor.cli.list.ProcessList" additivity="false">
+        <level value="INFO" />
+        <appender-ref ref="PROCESSED_URLS" />
     </logger>
          
     <!-- ** -->

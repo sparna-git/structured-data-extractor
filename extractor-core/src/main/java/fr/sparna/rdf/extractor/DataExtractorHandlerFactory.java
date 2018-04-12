@@ -14,6 +14,7 @@ import fr.sparna.rdf.handler.ContextHandler;
 import fr.sparna.rdf.handler.FilterDataVocabularyHandler;
 import fr.sparna.rdf.handler.FilterEmptyHandler;
 import fr.sparna.rdf.handler.FilterRdfaHandler;
+import fr.sparna.rdf.handler.FilterReflexiveStatementHandler;
 import fr.sparna.rdf.handler.FilterXHTMLHandler;
 import fr.sparna.rdf.handler.FilteringHandler;
 import fr.sparna.rdf.handler.SchemaOrgHttpNormalizerHandler;
@@ -35,6 +36,7 @@ public class DataExtractorHandlerFactory {
 	protected boolean filterRdfa = true;
 	protected boolean filterDataVocabulary = true;
 	protected boolean normalizeHttpSchemaOrg = true;
+	protected boolean filterReflexive = true;
 	protected IRI targetGraph;
 	
 	/**
@@ -85,6 +87,9 @@ public class DataExtractorHandlerFactory {
 		}
 		if(this.filterEmpty) {
 			result = new FilterEmptyHandler(result);
+		}
+		if(this.filterReflexive) {
+			result = new FilterReflexiveStatementHandler(result);
 		}
 		if(this.filterRdfa) {
 			result = new FilterRdfaHandler(result);
@@ -153,6 +158,14 @@ public class DataExtractorHandlerFactory {
 
 	public void setFilterDataVocabulary(boolean filterDataVocabulary) {
 		this.filterDataVocabulary = filterDataVocabulary;
+	}
+
+	public boolean isFilterReflexive() {
+		return filterReflexive;
+	}
+
+	public void setFilterReflexive(boolean filterReflexive) {
+		this.filterReflexive = filterReflexive;
 	}
 
 }

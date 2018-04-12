@@ -9,6 +9,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import edu.uci.ics.crawler4j.crawler.CrawlController;
+import fr.sparna.rdf.extractor.cli.RepositoryFactoryFromString;
 
 public class CrawlSpringContext {
 

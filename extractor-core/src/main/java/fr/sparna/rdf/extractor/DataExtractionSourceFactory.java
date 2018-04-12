@@ -53,6 +53,7 @@ public class DataExtractionSourceFactory {
 		SimpleDataExtractionSource source = new SimpleDataExtractionSource(iri);
 		
 		// fetch the input document
+		long start = System.currentTimeMillis();
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		HttpGet httpget = new HttpGet(iri.stringValue());
 		if(this.userAgent != null) {
@@ -70,6 +71,8 @@ public class DataExtractionSourceFactory {
 		        } finally {
 		            instream.close();
 		        }
+		        
+		        log.debug("Fetched "+iri+" in "+(System.currentTimeMillis() - start)+" ms");
 		        
 		        // keep the response content type
 				log.debug("Building a source with content/type "+entity.getContentType().getValue());

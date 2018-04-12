@@ -9,6 +9,13 @@ import org.eclipse.rdf4j.rio.RDFParser;
 import org.eclipse.rdf4j.rio.RDFParserRegistry;
 import org.eclipse.rdf4j.rio.Rio;
 
+/**
+ * Simple implementation of <code>DataExtractor</code> capable of parsing an input RDF file and send the
+ * parsed triple to the output RDFHandler directly.
+ * 
+ * @author Thomas Francart
+ *
+ */
 public class RdfExtractor implements DataExtractor {
 
 	@Override

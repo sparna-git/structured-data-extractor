@@ -10,6 +10,7 @@ import org.eclipse.rdf4j.rio.Rio;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.crawler.CrawlController.WebCrawlerFactory;
 import fr.sparna.rdf.extractor.cli.ExtractorCliCommandIfc;
+import fr.sparna.rdf.extractor.cli.RepositoryFactoryFromString;
 
 public class Crawl implements ExtractorCliCommandIfc {
 

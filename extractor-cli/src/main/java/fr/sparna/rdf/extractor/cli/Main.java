@@ -9,13 +9,16 @@ import com.beust.jcommander.ParameterException;
 
 import fr.sparna.rdf.extractor.cli.crawl.ArgumentsCrawl;
 import fr.sparna.rdf.extractor.cli.crawl.Crawl;
+import fr.sparna.rdf.extractor.cli.list.ArgumentsProcessList;
+import fr.sparna.rdf.extractor.cli.list.ProcessList;
 
 
 public class Main {
 
 	enum COMMAND {		
 		
-		CRAWL(new ArgumentsCrawl(), new Crawl())
+		CRAWL(new ArgumentsCrawl(), new Crawl()),
+		LIST(new ArgumentsProcessList(), new ProcessList())
 		;
 		
 		private ExtractorCliCommandIfc command;

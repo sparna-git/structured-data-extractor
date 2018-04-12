@@ -1,4 +1,4 @@
-package fr.sparna.rdf.extractor.cli.crawl;
+package fr.sparna.rdf.extractor.cli;
 
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.http.HTTPRepository;
