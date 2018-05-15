@@ -33,12 +33,18 @@ public class ArgumentsProcessList {
 	private String exclude;
 	
 	@Parameter(
-			names = "-ns",
+			names = { "-ns", "--namespaces" },
 			description = "Namespace prefixes, in the form <key1>,<ns1> <key2>,<ns2> e.g. skos,http://www.w3.org/2004/02/skos/core# dct,http://purl.org/dc/terms/",
 			variableArity = true,
 			splitter = SpaceSplitter.class
 	)
 	private List<String> namespaceMappingsStrings;
+	
+	@Parameter(
+			names = { "-no", "--no-overwrite" },
+			description = "If set and an output file already exists, it will not be overridden."
+	)
+	private boolean noOverwrite = false;
 	
 	public Map<String, String> getNamespaceMappings() {
 		if(this.namespaceMappingsStrings == null) {
@@ -82,7 +88,13 @@ public class ArgumentsProcessList {
 	public void setExclude(String exclude) {
 		this.exclude = exclude;
 	}
-	
-	
+
+	public boolean isNoOverwrite() {
+		return noOverwrite;
+	}
+
+	public void setNoOverwrite(boolean noOverwrite) {
+		this.noOverwrite = noOverwrite;
+	}
 	
 }

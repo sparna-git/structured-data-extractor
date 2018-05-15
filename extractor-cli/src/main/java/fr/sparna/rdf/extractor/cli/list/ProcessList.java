@@ -76,43 +76,54 @@ public class ProcessList implements ExtractorCliCommandIfc {
 		
 		for (String aLine : lines) {
 			
-			File outputFile = new File(a.getOutput(), URLEncoder.encode(aLine, "UTF-8")+".ttl");
-			RepositoryFactoryFromString repositoryFactory = new RepositoryFactoryFromString(outputFile.getAbsolutePath());
-			Repository r = repositoryFactory.newRepository();
-			
-			DataExtractionSource source = desf.buildSource(
-					SimpleValueFactory.getInstance().createIRI(aLine)
-			);
-			
-			// extract
-			try(RepositoryConnection connection = r.getConnection()) {
+			if(!aLine.equals("")) {
+				File outputFile = new File(a.getOutput(), URLEncoder.encode(aLine, "UTF-8")+".ttl");
 				
-				// set namespaces
-				ns.forEach((key,uri) -> connection.setNamespace(key, uri));
-				
-				// create handler
-				RDFHandler handler = dataExtractorHandlerFactory.newHandler(connection, source.getDocumentIri());							
-				
-				synchronized(extractor) {
-					extractor.extract(
-							source,
-							handler
-					);
+				if(a.isNoOverwrite() && outputFile.exists()) {
+					log.debug("Output file already exists, will skip it : {} ", outputFile.getName());
+					continue;
 				}
 				
-			}
-			
-			try(RepositoryConnection connection = r.getConnection()) {
-				// dump the content of the repo in a file
-				RDFWriter writer = Rio.createWriter(
-						Rio.getParserFormatForFileName(repositoryFactory.getRepositoryString()).orElse(RDFFormat.RDFXML),
-						new FileOutputStream(repositoryFactory.getRepositoryString())
+				RepositoryFactoryFromString repositoryFactory = new RepositoryFactoryFromString(outputFile.getAbsolutePath());
+				Repository r = repositoryFactory.newRepository();
+				
+				DataExtractionSource source = desf.buildSource(
+						SimpleValueFactory.getInstance().createIRI(aLine)
 				);
 				
-				connection.export(writer);
+				// extract
+				try(RepositoryConnection connection = r.getConnection()) {
+					
+					// set namespaces
+					if(ns != null) {
+						ns.forEach((key,uri) -> connection.setNamespace(key, uri));
+					}				
+					
+					// create handler
+					RDFHandler handler = dataExtractorHandlerFactory.newHandler(connection, source.getDocumentIri());							
+					
+					synchronized(extractor) {
+						extractor.extract(
+								source,
+								handler
+						);
+					}
+					
+				}
+				
+				try(RepositoryConnection connection = r.getConnection()) {
+					// dump the content of the repo in a file
+					RDFWriter writer = Rio.createWriter(
+							Rio.getParserFormatForFileName(repositoryFactory.getRepositoryString()).orElse(RDFFormat.RDFXML),
+							new FileOutputStream(repositoryFactory.getRepositoryString())
+					);
+					
+					connection.export(writer);
+				}
+				
+				log.info("{}", aLine);				
 			}
-			
-			log.info("{}", aLine);
+
 		}
 	}
 
