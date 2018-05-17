@@ -15,7 +15,7 @@ import fr.sparna.rdf.extractor.cli.RepositoryFactoryFromString;
 public class Crawl implements ExtractorCliCommandIfc {
 
 	@Override
-	public void execute(Object args) throws Exception {
+	public void execute(Object args) {
 		ArgumentsCrawl a = (ArgumentsCrawl)args;
 
 		/*
@@ -36,14 +36,18 @@ public class Crawl implements ExtractorCliCommandIfc {
 		controller.start(webCrawlerFactory, numberOfCrawlers);
 		
 		if(repositoryFactory.isFileRepository()) {
-			// dump the content of the repo in a file
-			RDFWriter writer = Rio.createWriter(
-					Rio.getParserFormatForFileName(repositoryFactory.getRepositoryString()).orElse(RDFFormat.RDFXML),
-					new FileOutputStream(repositoryFactory.getRepositoryString())
-			);
-			
-			try(RepositoryConnection c = ctx.getRepository().getConnection()) {
-				c.export(writer);
+			try {
+				// dump the content of the repo in a file
+				RDFWriter writer = Rio.createWriter(
+						Rio.getParserFormatForFileName(repositoryFactory.getRepositoryString()).orElse(RDFFormat.RDFXML),
+						new FileOutputStream(repositoryFactory.getRepositoryString())
+				);
+				
+				try(RepositoryConnection c = ctx.getRepository().getConnection()) {
+					c.export(writer);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 	}

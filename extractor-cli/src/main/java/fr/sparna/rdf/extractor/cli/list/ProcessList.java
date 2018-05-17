@@ -2,6 +2,8 @@ package fr.sparna.rdf.extractor.cli.list;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.util.Map;
@@ -30,7 +32,7 @@ public class ProcessList implements ExtractorCliCommandIfc {
 	private Logger log = LoggerFactory.getLogger(this.getClass().getName());
 	
 	@Override
-	public void execute(Object args) throws Exception {
+	public void execute(Object args) {
 		ArgumentsProcessList a = (ArgumentsProcessList)args;
 		
 		// create Extractor
@@ -48,21 +50,25 @@ public class ProcessList implements ExtractorCliCommandIfc {
 		}
 
 		
-		java.util.List<String> lines = Files.lines(a.getInput().toPath()).collect(Collectors.toList());
-		log.debug("Entries in input file : {} ", lines.size());
-		
-		if(a.getExclude() != null) {
-			File excludeFile = new File(a.getExclude());
-			if(excludeFile.exists()) {
-				java.util.List<String> linesExclude = Files.lines(new File(a.getExclude()).toPath()).collect(Collectors.toList());
-				log.debug("Entries in exclude file : {} ", linesExclude.size());
-				
-				lines.removeAll(linesExclude);
-				log.debug("Entries after exluding files : {} ", lines.size());
-			} else {
-				log.debug("File of excluded URI does not exist : {} ", a.getExclude());
+		java.util.List<String> lines = null;
+		try {
+			lines = Files.lines(a.getInput().toPath()).collect(Collectors.toList());
+			log.debug("Entries in input file : {} ", lines.size());
+			
+			if(a.getExclude() != null) {
+				File excludeFile = new File(a.getExclude());
+				if(excludeFile.exists()) {
+					java.util.List<String> linesExclude = Files.lines(new File(a.getExclude()).toPath()).collect(Collectors.toList());
+					log.debug("Entries in exclude file : {} ", linesExclude.size());
+					
+					lines.removeAll(linesExclude);
+					log.debug("Entries after exluding files : {} ", lines.size());
+				} else {
+					log.debug("File of excluded URI does not exist : {} ", a.getExclude());
+				}
 			}
-
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
 		
 		// create a source factory
@@ -77,51 +83,65 @@ public class ProcessList implements ExtractorCliCommandIfc {
 		for (String aLine : lines) {
 			
 			if(!aLine.equals("")) {
-				File outputFile = new File(a.getOutput(), URLEncoder.encode(aLine, "UTF-8")+".ttl");
-				
-				if(a.isNoOverwrite() && outputFile.exists()) {
-					log.debug("Output file already exists, will skip it : {} ", outputFile.getName());
-					continue;
-				}
-				
-				RepositoryFactoryFromString repositoryFactory = new RepositoryFactoryFromString(outputFile.getAbsolutePath());
-				Repository r = repositoryFactory.newRepository();
-				
-				DataExtractionSource source = desf.buildSource(
-						SimpleValueFactory.getInstance().createIRI(aLine)
-				);
-				
-				// extract
-				try(RepositoryConnection connection = r.getConnection()) {
-					
-					// set namespaces
-					if(ns != null) {
-						ns.forEach((key,uri) -> connection.setNamespace(key, uri));
-					}				
-					
-					// create handler
-					RDFHandler handler = dataExtractorHandlerFactory.newHandler(connection, source.getDocumentIri());							
-					
-					synchronized(extractor) {
-						extractor.extract(
-								source,
-								handler
-						);
+				try {
+					File outputFile = null;
+					try {
+						outputFile = new File(a.getOutput(), URLEncoder.encode(aLine, "UTF-8")+".ttl");
+					} catch (UnsupportedEncodingException ignore) {
+						// will never happen
+						ignore.printStackTrace();
 					}
 					
-				}
-				
-				try(RepositoryConnection connection = r.getConnection()) {
-					// dump the content of the repo in a file
-					RDFWriter writer = Rio.createWriter(
-							Rio.getParserFormatForFileName(repositoryFactory.getRepositoryString()).orElse(RDFFormat.RDFXML),
-							new FileOutputStream(repositoryFactory.getRepositoryString())
+					if(a.isNoOverwrite() && outputFile.exists()) {
+						log.debug("Output file already exists, will skip it : {} ", outputFile.getName());
+						continue;
+					}
+					
+					RepositoryFactoryFromString repositoryFactory = new RepositoryFactoryFromString(outputFile.getAbsolutePath());
+					Repository r = repositoryFactory.newRepository();
+					
+					DataExtractionSource source = desf.buildSource(
+							SimpleValueFactory.getInstance().createIRI(aLine)
 					);
 					
-					connection.export(writer);
-				}
-				
-				log.info("{}", aLine);				
+					// extract
+					try(RepositoryConnection connection = r.getConnection()) {
+						
+						// set namespaces
+						if(ns != null) {
+							ns.forEach((key,uri) -> connection.setNamespace(key, uri));
+						}				
+						
+						// create handler
+						RDFHandler handler = dataExtractorHandlerFactory.newHandler(connection, source.getDocumentIri());							
+						
+						synchronized(extractor) {
+							extractor.extract(
+									source,
+									handler
+							);
+						}
+						
+					}
+					
+					try(RepositoryConnection connection = r.getConnection()) {
+						// dump the content of the repo in a file
+						RDFWriter writer = Rio.createWriter(
+								Rio.getParserFormatForFileName(repositoryFactory.getRepositoryString()).orElse(RDFFormat.RDFXML),
+								new FileOutputStream(repositoryFactory.getRepositoryString())
+						);
+						connection.export(writer);					
+					} catch (Exception e) {
+						// will never happen
+						e.printStackTrace();
+					}
+					
+					log.info("{}", aLine);
+				} catch (Exception e) {
+					// Exception occuring while processing a single URI
+					e.printStackTrace();
+					log.error("ERROR : {}", aLine);
+				}				
 			}
 
 		}
