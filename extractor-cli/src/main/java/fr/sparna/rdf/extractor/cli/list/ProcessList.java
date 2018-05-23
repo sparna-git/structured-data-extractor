@@ -26,6 +26,7 @@ import fr.sparna.rdf.extractor.DataExtractorHandlerFactory;
 import fr.sparna.rdf.extractor.WebPageExtractorFactory;
 import fr.sparna.rdf.extractor.cli.ExtractorCliCommandIfc;
 import fr.sparna.rdf.extractor.cli.RepositoryFactoryFromString;
+import fr.sparna.rdf.handler.FilterKeepNamespaceHandler;
 
 public class ProcessList implements ExtractorCliCommandIfc {
 
@@ -114,6 +115,9 @@ public class ProcessList implements ExtractorCliCommandIfc {
 						
 						// create handler
 						RDFHandler handler = dataExtractorHandlerFactory.newHandler(connection, source.getDocumentIri());							
+						if(a.getKeepNamespaces() != null) {
+							handler = new FilterKeepNamespaceHandler(handler, a.getKeepNamespaces());
+						}
 						
 						synchronized(extractor) {
 							extractor.extract(

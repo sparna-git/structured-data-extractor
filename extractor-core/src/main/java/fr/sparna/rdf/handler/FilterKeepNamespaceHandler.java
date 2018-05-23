@@ -29,6 +29,11 @@ public class FilterKeepNamespaceHandler extends RDFHandlerWrapper implements RDF
 	public FilterKeepNamespaceHandler(RDFHandler handler) {
 		super(handler);
 	}
+	
+	public FilterKeepNamespaceHandler(RDFHandler handler, List<String> namespaces) {
+		super(handler);
+		this.namespaces = namespaces;
+	}
 
 	@Override
 	public void handleStatement(Statement s) throws RDFHandlerException {		
@@ -39,6 +44,14 @@ public class FilterKeepNamespaceHandler extends RDFHandlerWrapper implements RDF
 		) {
 			super.handleStatement(s);
 		}
+	}
+
+	public List<String> getNamespaces() {
+		return namespaces;
+	}
+
+	public void setNamespaces(List<String> namespaces) {
+		this.namespaces = namespaces;
 	}
 	
 }

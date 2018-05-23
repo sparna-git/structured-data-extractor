@@ -46,6 +46,14 @@ public class ArgumentsProcessList {
 	)
 	private boolean noOverwrite = false;
 	
+	@Parameter(
+			names = { "-kn", "--keep-namespaces" },
+			description = "If set, keep only metadata in these namespaces",
+			variableArity = true,
+			splitter = SpaceSplitter.class
+	)
+	private List<String> keepNamespaces;
+	
 	public Map<String, String> getNamespaceMappings() {
 		if(this.namespaceMappingsStrings == null) {
 			return null;
@@ -95,6 +103,14 @@ public class ArgumentsProcessList {
 
 	public void setNoOverwrite(boolean noOverwrite) {
 		this.noOverwrite = noOverwrite;
+	}
+
+	public List<String> getKeepNamespaces() {
+		return keepNamespaces;
+	}
+
+	public void setKeepNamespaces(List<String> keepNamespaces) {
+		this.keepNamespaces = keepNamespaces;
 	}
 	
 }
