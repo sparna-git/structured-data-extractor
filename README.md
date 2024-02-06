@@ -58,3 +58,8 @@ The folder under `extractor-cli/src/test/resources/URI-lists` contains the files
 # Note on the storage in the triplestore
 
 The `extractor-server` modules persists the result of the extraction in a triplestore. Each set of triples from each page is kept in a separate named graph. The named graph is identified by the original URL of the page, and is described with a `dcterms:modified` triple with the date of insertion, and a `dcterms:isPartOf` triple with the domain name of the page. This is useful to e.g. select or delete or query all named graphs coming from a known domain/website. See the class `fr.sparna.rdf.extractor.RepositoryManagementListener` that is responsible for this.
+
+# How this project could be reused for ELI-based search ?
+
+- part of the module `extractor-core` could be reused, with only RDFa and JSON-LD extractors. JSON-LD extractor would need to be upgraded to JSON-LD 1.1. The code is well documented and - I think - rather robust.
+- you may want to run that extraction service as a Microservice, so `extractor-server` could be useful too.
