@@ -1,0 +1,5 @@
+#Retrieves the list of all ELI URIs from the Cellar
+prefix cdm: <http://publications.europa.eu/ontology/cdm#>
+select (IRI(?eliString) AS ?eli) where {
+  ?x cdm:resource_legal_eli ?eliString .
+}
