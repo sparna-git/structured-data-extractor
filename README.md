@@ -54,3 +54,7 @@ http://data.europa.eu/eli/dir/1997/53/oj
 _Note : somehow (I can't remember where exactly) the successfully processed URLs are logged into `processed-urls.log`, so that if the process fails for any reason, this file is being passed back to the second run and URLs already processed are not extracted a second time._
 
 The folder under `extractor-cli/src/test/resources/URI-lists` contains the files of the URI lists that were used to extract dataset from Portugal, Eur-Lex, Ireland, Denmark and Italy, for the 2018 Datathon. The resulting datasets were published on the EU ODP, see https://data.europa.eu/data/datasets?locale=en&minScoring=0&query=ELI&page=1
+
+# Note on the storage in the triplestore
+
+The `extractor-server` modules persists the result of the extraction in a triplestore. Each set of triples from each page is kept in a separate named graph. The named graph is identified by the original URL of the page, and is described with a `dcterms:modified` triple with the date of insertion, and a `dcterms:isPartOf` triple with the domain name of the page. This is useful to e.g. select or delete or query all named graphs coming from a known domain/website. See the class `fr.sparna.rdf.extractor.RepositoryManagementListener` that is responsible for this.
