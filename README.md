@@ -35,7 +35,7 @@ Here is a complete command-line example:
 --input random-elis-test.txt \
 --output output \
 --exclude processed-urls.log \
--namespaces eli,http://data.europa.eu/eli/ontology# xsd,http://www.w3.org/2001/XMLSchema# ev,http://eurovoc.europa.eu/ corp,http://publications.europa.eu/resource/authority/corporate-body/ lang,http://publications.europa.eu/resource/authority/language/ m-app,http://www.iana.org/assignments/media-types/application/ res-oj,http://publications.europa.eu/resource/oj/ res-celex,http://publications.europa.eu/resource/celex/`
+--namespaces eli,http://data.europa.eu/eli/ontology# xsd,http://www.w3.org/2001/XMLSchema# ev,http://eurovoc.europa.eu/ corp,http://publications.europa.eu/resource/authority/corporate-body/ lang,http://publications.europa.eu/resource/authority/language/ m-app,http://www.iana.org/assignments/media-types/application/ res-oj,http://publications.europa.eu/resource/oj/ res-celex,http://publications.europa.eu/resource/celex/`
 
 The file `random-elis-test.txt` contains the following URIs:
 
